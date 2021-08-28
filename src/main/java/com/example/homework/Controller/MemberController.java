@@ -1,38 +1,42 @@
 package com.example.homework.Controller;
 
 import com.example.homework.Model.MemberAccount;
-import com.example.homework.Repositorys.MemberRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.homework.request.GetMemberListRequest;
+import com.example.homework.service.MemberAccountService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/memberApi")
 public class MemberController {
 
-    @Autowired
-    MemberRepository memberRepository;
+    @Resource
+    MemberAccountService memberAccountService;
 
-    @RequestMapping(value="/{id}")
-    public Optional<MemberAccount> read(@PathVariable long id) {
-        return memberRepository.findById(id);
+    @PostMapping(value = "/getMemberAllList")
+    public List<Map<String, Object>> getMemberAllList(@RequestBody GetMemberListRequest request) {
+        request.setCount(memberAccountService.countMemberAllList(request));
+        return memberAccountService.getMemberAllList(request);
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public void create(@RequestBody MemberAccount memberAccount) {
-        memberRepository.save(memberAccount);
+        memberAccountService.save(memberAccount);
     }
 
     @RequestMapping(method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
     public void update(@RequestBody MemberAccount memberAccount) {
-        memberRepository.save(memberAccount);
+        memberAccountService.save(memberAccount);
 
     }
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
     public void delete(@PathVariable long id) {
-        memberRepository.deleteById(id);
+        memberAccountService.deleteById(id);
 
     }
 }
